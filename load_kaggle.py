@@ -45,5 +45,6 @@ def get_kaggle_data(data_name,foldername = '', data_format = '.csv'):
             data_dict[data_file] = pd_data
     finally:
         shutil.rmtree('tmp_data')
+        print("'tmp_data' folder removed")
     return(data_dict)
     
