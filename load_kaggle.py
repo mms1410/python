@@ -12,7 +12,7 @@ import zipfile
 import shutil
 import pandas as pd
 
-def get_kaggle_data(data_name,foldername = '', data_format = '.csv'):
+def get_kaggle_data(data_name,foldername = '', data_format = '.csv', read_as = str):
     """
     Parameters
     ----------
@@ -22,6 +22,7 @@ def get_kaggle_data(data_name,foldername = '', data_format = '.csv'):
         folder where downloaded data is stored.
     data_format : string, optional
         file type from kaggle set (including leading dot). The default is '.csv'.
+    read_as: default type of columns
 
     Returns
     -------
@@ -29,6 +30,8 @@ def get_kaggle_data(data_name,foldername = '', data_format = '.csv'):
     names according to name in kaggle set (including file ending)
 
     """
+    #data_name = 'noaa/hurricane-database'
+    #data_format = ".csv"
     bash_command = 'kaggle datasets download -d '+ data_name + " -p 'tmp_data'"
     try:
         os.mkdir('tmp_data')
@@ -41,10 +44,9 @@ def get_kaggle_data(data_name,foldername = '', data_format = '.csv'):
         z.extractall('tmp_data'+ os.sep + zip_name[:-4])
         data_dict = {}
         for data_file in zip_names:
-            pd_data = pd.read_csv('tmp_data' + os.sep + zip_name[:-4] + os.sep + data_file)
+            pd_data = pd.read_csv('tmp_data' + os.sep + zip_name[:-4] + os.sep + data_file, dtype = read_as)
             data_dict[data_file] = pd_data
     finally:
         shutil.rmtree('tmp_data')
         print("'tmp_data' folder removed")
     return(data_dict)
-    
