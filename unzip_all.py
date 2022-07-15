@@ -10,6 +10,7 @@ from tkinter import filedialog
 from tkinter import messagebox
 import os
 import zipfile
+import shutil
 import tkinter as tk
 foldername_unzipped = "unzipped"
 
@@ -19,11 +20,15 @@ root.withdraw()
 folder_selected = filedialog.askdirectory()
 
 if os.path.isdir(os.path.join(folder_selected, foldername_unzipped)):
-    msg = messagebox.askquestion("Folder 'unziped' already exists.\n Redo?")
+    msg = messagebox.askquestion(message = "Folder 'unziped' already exists.\n Redo?")
     if not msg:
         exit()
     else:
-        os.rmdir(os.path.join(folder_selected, foldername_unzipped))
+        msg = messagebox.askyesnocancel(message = "unzipped folder will be deleted.\n Do you want to continue?")
+        if msg:
+            shutil.rmtree(os.path.join(folder_selected, foldername_unzipped))
+        else:
+            exit()
 
     
 files = [file for file in os.listdir(folder_selected)]
@@ -33,5 +38,9 @@ folder_extract = os.path.join(folder_selected, foldername_unzipped)
 
 for file in files:
     folder_fullpath = os.path.join(folder_selected, file)
-    with zipfile.ZipFile(folder_fullpath, "r") as zfile:
-        zfile.extractall(folder_extract)
+    filename_unzipped = os.path.splitext(file)[0]
+    filename_unzipped = os.path.join(folder_extract, filename_unzipped)
+    os.mkdir(filename_unzipped)
+    
+    with zipfile.ZipFile(os.path.join(folder_selected, file)) as zfile:
+        zfile.extractall(filename_unzipped)
